@@ -1,33 +1,44 @@
 import { Octokit } from "@octokit/rest";
-import { ACCESS_TOKEN } from "./constant";
-import { Base64 } from 'js-base64';
+import { TOKENS } from "./constant";
+import { Base64 } from "js-base64";
 
-const octokit = new Octokit({
-  auth: ACCESS_TOKEN,
-});
+const owner = "lin-dongyizhi7";
+const repo = "snack-free-data-store";
 
 export const fetchGitHubFile = async (path: string) => {
-  const url = `https://raw.githubusercontent.com/lin-dongyizhi7/snack-free-data-store/main/${path}`;
+    // const url = `https://raw.githubusercontent.com/lin-dongyizhi7/snack-free-data-store/main/${path}`;
   try {
-    const response = await fetch(url, {
-      headers: {
-        Accept: "application/vnd.github.raw",
-      },
+    const octokit = new Octokit({
+      auth: TOKENS.ACCESS_TOKEN,
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return await response.text();
+    const { data } = await octokit.repos.getContent({
+      owner,
+      repo,
+      path,
+    });
+
+    console.log(data);
+    // 文件内容以 Base64 编码存储，需要进行解码
+    const content = Base64.decode(data.content);
+    const jsonData = JSON.parse(content);
+
+    console.log('JSON 文件内容:', jsonData);
+    return jsonData;
   } catch (error) {
     console.error("Error fetching file:", error);
   }
 };
 
-export const updateGitHubFile = async (path: string, newContent: string, commitMessage: string) => {
-  const owner = "lin-dongyizhi7";
-  const repo = "snack-free-data-store";
+export const updateGitHubFile = async (
+  path: string,
+  newContent: string,
+  commitMessage: string
+) => {
   try {
+    const octokit = new Octokit({
+      auth: TOKENS.ACCESS_TOKEN,
+    });
     const response = await octokit.repos.getContent({
       owner,
       repo,
@@ -42,8 +53,7 @@ export const updateGitHubFile = async (path: string, newContent: string, commitM
     const currentSHA = fileData.sha; // 获取文件的 SHA 值
 
     // 修改文件内容，将新内容转换为 Base64 编码
-    // const content = Buffer.from(newContent).toString("base64");
-    const content = Base64.encode(newContent)
+    const content = Base64.encode(newContent);
 
     // 提交更改
     const result = await octokit.repos.createOrUpdateFileContents({
@@ -60,4 +70,4 @@ export const updateGitHubFile = async (path: string, newContent: string, commitM
   } catch (error) {
     console.error("Error updating file:", error);
   }
-}
+};

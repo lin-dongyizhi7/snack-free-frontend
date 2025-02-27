@@ -1,11 +1,21 @@
+import { fetchGitHubFile, updateGitHubFile } from "../utils/request";
+
 export const getMarkedDays = async (): Promise<string[]> => {
-  return Promise.resolve([
-    "2025-02-20",
-    "2025-02-21",
-    "2025-02-22",
-    "2025-02-23",
-    "2025-02-24",
-    "2025-02-25",
-    "2025-02-26",
-  ]);
+  const content = await fetchGitHubFile("marked_date.json");
+  if (content) return JSON.parse(content)?.marked_date;
+  else return Promise.resolve([]);
+};
+
+export const updateMarkedDays = async (marked_date: string[]) => {
+  const newContent = JSON.stringify(marked_date);
+  await updateGitHubFile("test.json", newContent, "update marked_date.json");
+};
+
+// 测试GITHUB REST API
+export const test = async () => {
+  const newContent = `{
+    "description": "yys yyds"
+}`;
+  const msg = "xxxxx";
+  await updateGitHubFile("test.json", newContent, msg);
 };

@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type Ref, onMounted, computed } from 'vue';
+import { ref, type Ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import type { CalendarDateType, CalendarInstance } from 'element-plus';
 
@@ -175,6 +175,7 @@ const opt = (date: string) => {
 }
 
 .key-day-upcoming-mark {
+  color: #aaaaaa;
 }
 
 @media (max-width: 768px) {

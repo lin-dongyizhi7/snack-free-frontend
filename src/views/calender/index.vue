@@ -26,8 +26,8 @@
           <div v-else-if="isKeyDayUpcoming(data.day).flag" class="key-day-upcoming-mark">
             {{ isKeyDayUpcoming(data.day).num }}
           </div>
-          <div v-if="isToday(data.day)" class="without-mark">
-            <el-button size="small" text @click="punch()"> 打卡 </el-button>
+          <div v-if="isToday(data.day) && !isMarked(data.day)" class="without-mark">
+            <el-button size="small" text @click="punch(data.day)"> 打卡 </el-button>
           </div>
           <div
             v-if="
@@ -36,7 +36,7 @@
               daysDiffToday(data.day) > -7
             "
           >
-            <el-button size="small" text @click="punch()"> 补打卡 </el-button>
+            <el-button size="small" text @click="punch(data.day)"> 补打卡 </el-button>
           </div>
         </div>
       </template>
@@ -134,11 +134,21 @@ const isKeyDayUpcoming = (date: string) : FlagDate => {
 
 const viewHistory = (date: string) => {
   console.log(date);
-  router.push('/history');
+  router.push({
+    name: 'History',
+    query: {
+      date: date
+    }
+  });
 }
-const punch = () => {
+const punch = (date) => {
   console.log('打卡');
-  router.push('/record');
+  router.push({
+    name: 'Record',
+    query: {
+      date: date
+    }
+  });
 };
 
 

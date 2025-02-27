@@ -31,9 +31,10 @@ const router = useRouter();
 const verify = () => {
   const res = lock(inputValue.value);
   if (eqLock(res)) {
-    authStore.setToken(res)
+    authStore.setToken(res);
+    localStorage.setItem('myToken', inputValue.value);
     updateToken(inputValue.value);
-    router.push('/home');
+    router.push('/');
   }
 };
 </script>

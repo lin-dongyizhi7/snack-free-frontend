@@ -8,20 +8,20 @@ export const isToday = (date: string): boolean => {
 };
 
 export const isPreDay = (dateA: string, dateB: string): boolean => {
-//   // 将字符串日期转换为 Date 对象
-//   const a = new Date(dateA);
-//   const b = new Date(dateB);
+  //   // 将字符串日期转换为 Date 对象
+  //   const a = new Date(dateA);
+  //   const b = new Date(dateB);
 
-//   // 创建一个新的 Date 对象，将 dateB 的日期减去一天
-//   const preDayOfB = new Date(b);
-//   preDayOfB.setDate(preDayOfB.getDate() - 1);
+  //   // 创建一个新的 Date 对象，将 dateB 的日期减去一天
+  //   const preDayOfB = new Date(b);
+  //   preDayOfB.setDate(preDayOfB.getDate() - 1);
 
-//   // 比较 dateA 和 dateB 的前一天是否相等
-//   return (
-//     a.getFullYear() === preDayOfB.getFullYear() &&
-//     a.getMonth() === preDayOfB.getMonth() &&
-//     a.getDate() === preDayOfB.getDate()
-//   );
+  //   // 比较 dateA 和 dateB 的前一天是否相等
+  //   return (
+  //     a.getFullYear() === preDayOfB.getFullYear() &&
+  //     a.getMonth() === preDayOfB.getMonth() &&
+  //     a.getDate() === preDayOfB.getDate()
+  //   );
   return daysDiff(dateA, dateB) === 1;
 };
 
@@ -57,4 +57,15 @@ export const daysDiffToday = (targetDay: string): number => {
   const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
 
   return daysDiff;
+};
+
+export const insertDay = (dateList: string[], newDate: string): string[] => {
+  for (let i = 0; i < dateList.length; i++) {
+    if (newDate < dateList[i]) {
+      dateList.splice(i, 0, newDate);
+      return dateList;
+    }
+  }
+  dateList.push(newDate);
+  return dateList;
 };

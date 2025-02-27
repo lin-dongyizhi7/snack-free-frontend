@@ -1,6 +1,7 @@
 <template>
   <div>
-    <el-button class="mb-20" @click="returnHome()" text>返回首页</el-button>
+    <el-button class="mb-10" @click="returnHome()" text>返回首页</el-button>
+    <div class="text-center text-blue-400 text-xl mb-10">{{ markDate }}</div>
     <el-upload
       class="upload-demo"
       ref="uploadRef"
@@ -28,16 +29,26 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { dayjs, type UploadUserFile, type UploadProps } from 'element-plus'
+import { ref, onMounted } from 'vue';
+import { dayjs, ElLoading, ElMessage, type UploadUserFile, type UploadProps } from 'element-plus';
+import { useRouter, useRoute } from 'vue-router';
 
 import { uploadFileToGithub } from '../../utils/request';
-import { useRouter } from 'vue-router';
+import { insertDay } from "../../utils/date";
+import {getMarkedDays, updateMarkedDays} from "../../api/date";
 
 const router = useRouter();
 const returnHome = () => {
-    router.push('/home');
+    router.push('/');
 }
+
+const route = useRoute();
+const markDate = ref<string>("");
+
+onMounted(()=>{
+  console.log(route.query.date);
+  markDate.value = route.query.date;
+})
 
 const uploadRef = ref(null);
 const fileList = ref([]);
@@ -59,15 +70,37 @@ const handleRemove = (file: UploadUserFile, fileList: UploadUserFile[]) => {
 };
 
 const handlePreview: UploadProps['onPreview'] = (file) => {
-  console.log(file)
+  console.log(file);
 }
 
 const submitFiles = async () => {
-    const date = new Date();
+    if (!fileList.value.length) {
+      ElMessage({
+        message: '需要上传图片！',
+        type: 'warning',
+      });
+      return;
+    }
+    const loadingInstance = ElLoading.service({ fullscreen: true });
+    const date = new Date(markDate.value);
     const formatDate = dayjs(date).format('YYYY-MM-DD');
     console.log(fileList.value);
     await uploadFileToGithub(fileList.value, formatDate + '/');
+    await addDay(markDate.value);
+    loadingInstance.close();
+    router.push({
+      name: 'History',
+      query: {
+        date: markDate.value
+      }
+    });
  }
+
+const addDay = async (date) => {
+  const nowDates = await getMarkedDays();
+  const newDates = insertDay(nowDates, date);
+  await updateMarkedDays(newDates);
+}
 </script>
 
 <style scoped lang="less">

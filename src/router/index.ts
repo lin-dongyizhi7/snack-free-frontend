@@ -1,22 +1,23 @@
-import { createRouter, createWebHashHistory  } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 
 import Login from "../views/home/login.vue";
 import Home from "../views/home/index.vue";
 import Record from "../views/record/index.vue";
+import History from "../views/history/index.vue";
 import Mall from "../views/mall/index.vue";
 
-import { eqLock } from "../utils/constant";
+import { eqLock, updateToken } from "../utils/constant";
 import { useAuthStore } from "../stores/auth";
 
 const routes = [
   {
-    path: "/",
+    path: "/login",
     name: "Login",
     component: Login,
     meta: { requiresAuth: false },
   },
   {
-    path: "/home",
+    path: "/",
     name: "Home",
     component: Home,
     meta: { requiresAuth: true },
@@ -28,6 +29,12 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: "/history",
+    name: "History",
+    component: History,
+    meta: { requiresAuth: true },
+  },
+  {
     path: "/mall",
     name: "Mall",
     component: Mall,
@@ -36,16 +43,22 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHashHistory (),
+  history: createWebHashHistory(),
   routes,
 });
 
 router.beforeEach((to, from, next) => {
-  console.log(from ,to);
+  console.log(from, to);
+  const token = localStorage.getItem("myToken");
   const authStore = useAuthStore();
-  if (to.meta.requiresAuth && (!authStore.token || !eqLock(authStore.token))) {
-    next("/");
+  if (
+    to.meta.requiresAuth &&
+    !token &&
+    (!authStore.token || !eqLock(authStore.token))
+  ) {
+    next("/login");
   } else {
+    if (token) updateToken(token);
     next();
   }
 });

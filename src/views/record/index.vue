@@ -1,0 +1,76 @@
+<template>
+  <div>
+    <el-button class="mb-20" @click="returnHome()" text>返回首页</el-button>
+    <el-upload
+      class="upload-demo"
+      ref="uploadRef"
+      v-model:file-list="fileList"
+      action="#"
+      :multiple="true"
+      :auto-upload="false"
+      :on-change="handleChange"
+      :on-remove="handleRemove"
+      :on-preview="handlePreview"
+      list-type="picture"
+      drag
+    >
+      <template #trigger>
+        <div style="height: 150px" class="flex items-center justify-center">
+          <el-button type="primary" text>选取图片</el-button>
+        </div>
+      </template>
+      <template #tip>
+        <div class="el-upload__tip">只能上传 jpg/png 文件，一次不超过50MB</div>
+      </template>
+    </el-upload>
+    <el-button type="primary" @click="submitFiles">提交打卡</el-button>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { ref } from 'vue';
+import { dayjs, type UploadUserFile, type UploadProps } from 'element-plus'
+
+import { uploadFileToGithub } from '../../utils/request';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const returnHome = () => {
+    router.push('/home');
+}
+
+const uploadRef = ref(null);
+const fileList = ref([]);
+
+const handleChange = (file: UploadUserFile, fileList: UploadUserFile[]) => {
+  fileList.forEach((f) => {
+    if (!fileList.some((item) => item.uid === f.uid)) {
+      fileList.push(f);
+    }
+  });
+};
+
+const handleRemove = (file: UploadUserFile, fileList: UploadUserFile[]) => {
+  const index = fileList.findIndex((item) => item.uid === file.uid);
+  if (index > -1) {
+    fileList.splice(index, 1);
+  }
+};
+
+const handlePreview: UploadProps['onPreview'] = (file) => {
+  console.log(file)
+}
+
+const submitFiles = async () => {
+    const date = new Date();
+    const formatDate = dayjs(date).format('YYYY-MM-DD');
+    console.log(fileList.value);
+    await uploadFileToGithub(fileList.value, formatDate + '/');
+ }
+</script>
+
+<style scoped lang="less">
+.upload-demo {
+  margin-bottom: 20px;
+}
+</style>

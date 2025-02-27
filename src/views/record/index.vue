@@ -43,6 +43,7 @@ const uploadRef = ref(null);
 const fileList = ref([]);
 
 const handleChange = (file: UploadUserFile, fileList: UploadUserFile[]) => {
+  console.log(file);
   fileList.forEach((f) => {
     if (!fileList.some((item) => item.uid === f.uid)) {
       fileList.push(f);

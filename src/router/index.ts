@@ -41,6 +41,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  console.log(from ,to);
   const authStore = useAuthStore();
   if (to.meta.requiresAuth && (!authStore.token || !eqLock(authStore.token))) {
     next("/");

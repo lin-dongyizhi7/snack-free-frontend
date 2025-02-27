@@ -18,7 +18,8 @@ export const fetchGitHubFile = async (path: string) => {
     });
 
     // 文件内容以 Base64 编码存储，需要进行解码
-    const content = Base64.decode(data.content);
+    const fileData = data as { content: string };
+    const content = Base64.decode(fileData.content);
     const jsonData = JSON.parse(content);
     return jsonData;
   } catch (error) {

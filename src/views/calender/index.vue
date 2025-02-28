@@ -81,6 +81,7 @@ const consecutiveDates: Ref<string[]> = ref([]);
 const getConsecutiveDays = () => {
   const dates = punchedDates.value;
   const lastDay = dates[dates.length - 1];
+  if (!lastDay) return 0;
   if (daysDiffToday(lastDay)<-1) return 0;
   let count = 1;
   consecutiveDates.value.push(lastDay);

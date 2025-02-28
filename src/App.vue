@@ -13,6 +13,7 @@
   color: #2c3e50;
   width: 100%;
   height: calc(100vh - 64px);
+  padding: 4px 0;
 }
 
 @media (max-width: 768px) {

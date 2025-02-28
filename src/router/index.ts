@@ -5,6 +5,8 @@ import Home from "../views/home/index.vue";
 import Record from "../views/record/index.vue";
 import History from "../views/history/index.vue";
 import Mall from "../views/mall/index.vue";
+import MyPage from "../views/my-page/index.vue";
+import NoteEditor from "../views/my-page/note-add-edit.vue";
 
 import { eqLock, updateToken } from "../utils/constant";
 import { useAuthStore } from "../stores/auth";
@@ -32,6 +34,18 @@ const routes = [
     path: "/history",
     name: "History",
     component: History,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/my-page",
+    name: "MyPage",
+    component: MyPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/note-editor",
+    name: "NoteEditor",
+    component: NoteEditor,
     meta: { requiresAuth: true },
   },
   {

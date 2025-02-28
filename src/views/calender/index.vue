@@ -15,7 +15,7 @@
       </template>
       <template #date-cell="{ data }">
         <div class="calendar-cell" @click="opt(data.day)">
-          {{ data.day.split("-").slice(1).join("-") }}
+          {{ data.day.split("-")[2] }}
           <!-- 标记打卡 -->
           <div v-if="isMarked(data.day)" class="punch-mark"></div>
           <!-- 标记已达到关键天数 -->

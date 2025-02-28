@@ -1,0 +1,85 @@
+<template>
+  <div class="w-full">
+    <div id="vditor" ref="vditorRef"></div>
+    <el-button @click="goBack" text>返回</el-button>
+    <el-button @click="saveNote" type="primary" text>保存</el-button>
+  </div>
+</template>
+
+<script setup>
+import { onMounted, ref } from "vue";
+import Vditor from "vditor";
+import "vditor/dist/index.css";
+
+const vditorRef = ref(null);
+const vditorInstance = ref(null);
+
+const props = defineProps({
+  initText: {
+    type: String,
+    required: false,
+    default: "添加新笔记",
+  },
+});
+
+onMounted(() => {
+  editorContent.value = props.initText;
+  console.log(editorContent.value);
+  vditorInstance.value = new Vditor("vditor", {
+    height: 580,
+    toolbar: [
+      "emoji",
+      "headings",
+      "bold",
+      "italic",
+      "strike",
+      "link",
+      "|",
+      "list",
+      "ordered-list",
+      "check",
+      "outdent",
+      "indent",
+      "|",
+      "quote",
+      "line",
+      "code",
+      "inline-code",
+      "insert-before",
+      "insert-after",
+      "|",
+      "upload",
+      "table",
+      "undo",
+      "redo",
+      "fullscreen",
+      "preview",
+      "edit-mode",
+    ],
+    value: editorContent.value,
+    placeholder: "添加内容...",
+    cache: {
+      enable: false,
+    },
+  });
+});
+
+const emits = defineEmits(["save", "cancel"]);
+
+const editorContent = ref("");
+
+const saveNote = () => {
+  editorContent.value = vditorInstance.value.getValue();
+  console.log(editorContent.value);
+  //   emits("save", editorContent.value);
+};
+
+const goBack = () => {
+  emits("cancel");
+};
+</script>
+<style lang="less" scoped>
+:deep(.vditor-reset) {
+  text-align: left;
+}
+</style>

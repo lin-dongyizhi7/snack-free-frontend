@@ -1,16 +1,20 @@
 <template>
-  <div class="container mx-auto p-4 flex flex-col items-center">
+  <div class="container mx-auto p-4 flex flex-col items-center gap-y-1">
     <el-button class="mb-10" @click="returnHome()" text>返回首页</el-button>
     <h1 class="text-2xl font-bold mb-4">我的主页</h1>
-    <el-button class="" text @click="addNoteHandler">+ 添加笔记</el-button>
+    <div>心有所向，日复一日，必有精进。</div>
+    <el-button text @click="addNoteHandler">+ 添加笔记</el-button>
     <ul>
       <li v-for="note in notes" :key="note.sha" class="flex flex-col items-center w-full">
         <div class="flex items-center w-full">
-          <div class="w-[240px] text-left">{{ note.name.split("##")[1] }}</div>
-          <el-button class="w-[60px]" text @click="editNoteHandler(note)">
+          <div class="w-[200px] text-left">{{ note.showName }}</div>
+          <div class="w-[80px] text-sm text-gray-600/50">
+            {{ note.time }}
+          </div>
+          <el-button class="w-[40px]" text size="small" @click="editNoteHandler(note)">
             编辑
           </el-button>
-          <el-button class="w-[60px]" text @click="deleteNoteHandler(note)">
+          <el-button class="w-[40px]" text size="small" @click="deleteNoteHandler(note)">
             删除
           </el-button>
         </div>
@@ -33,7 +37,13 @@ const returnHome = () => {
 const notes = ref<any>([]);
 
 const fetchNotes = async () => {
-  notes.value = await getNotes(process.env.TARGET_FOLDER + "notes");
+  const res = await getNotes(process.env.TARGET_FOLDER + "notes");
+  res.forEach((note: any) => {
+    const name = note.name;
+    note["time"] = name.split("##")[0];
+    note["showName"] = name.split("##")[1];
+  });
+  notes.value = res;
   console.log(notes.value);
 };
 

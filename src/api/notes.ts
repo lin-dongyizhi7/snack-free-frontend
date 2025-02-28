@@ -9,14 +9,15 @@ export const getNotes = async (path: string) => {
     auth: TOKENS.ACCESS_TOKEN,
   });
   try {
-    const { data } = await octokit.repos.getContent({
+    const { data }: any = await octokit.repos.getContent({
       owner,
       repo,
       path,
     });
-    return data.filter((item) => item.type === "file");
+
+    return data.filter((item: any) => item.type === "file");
   } catch (error) {
-    console.error("获取笔记列表失败:", error);
+    console.error("Get notes list fail:", error);
     return [];
   }
 };
@@ -26,14 +27,14 @@ export const getNoteContent = async (path: string) => {
     auth: TOKENS.ACCESS_TOKEN,
   });
   try {
-    const { data } = await octokit.repos.getContent({
+    const { data }: any = await octokit.repos.getContent({
       owner,
       repo,
       path,
     });
     return atob(data.content);
   } catch (error) {
-    console.error("获取笔记内容失败:", error);
+    console.error("Get note content fail:", error);
     return "";
   }
 };
@@ -50,13 +51,14 @@ export const createNote = async (
     await octokit.repos.createOrUpdateFileContents({
       owner,
       repo,
-      path: `${path}/${fileName}`,
-      message: `Create note: ${fileName}`,
+      path: `${path}notes/${fileName}.md`,
+      message: `Create note: ${fileName}.md`,
       content: btoa(content),
+      branch: "main",
     });
-    console.log("笔记创建成功");
+    console.log("Note create succeed");
   } catch (error) {
-    console.error("创建笔记失败:", error);
+    console.error("Note create fail:", error);
   }
 };
 
@@ -76,10 +78,11 @@ export const updateNote = async (
       message: `Update note: ${path}`,
       content: btoa(content),
       sha,
+      branch: "main",
     });
-    console.log("笔记更新成功");
+    console.log("Note update succeed");
   } catch (error) {
-    console.error("更新笔记失败:", error);
+    console.error("Note update fail:", error);
   }
 };
 
@@ -94,9 +97,10 @@ export const deleteNote = async (path: string, sha: string) => {
       path,
       message: `Delete note: ${path}`,
       sha,
+      branch: "main",
     });
-    console.log("笔记删除成功");
+    console.log("Note delete succeed");
   } catch (error) {
-    console.error("删除笔记失败:", error);
+    console.error("Note delete succeed:", error);
   }
 };

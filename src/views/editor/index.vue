@@ -22,9 +22,10 @@ const props = defineProps({
   },
 });
 
+const editorContent = ref("");
+
 onMounted(() => {
   editorContent.value = props.initText;
-  console.log(editorContent.value);
   vditorInstance.value = new Vditor("vditor", {
     height: 580,
     toolbar: [
@@ -66,12 +67,9 @@ onMounted(() => {
 
 const emits = defineEmits(["save", "cancel"]);
 
-const editorContent = ref("");
-
 const saveNote = () => {
   editorContent.value = vditorInstance.value.getValue();
-  console.log(editorContent.value);
-  //   emits("save", editorContent.value);
+    emits("save", editorContent.value);
 };
 
 const goBack = () => {

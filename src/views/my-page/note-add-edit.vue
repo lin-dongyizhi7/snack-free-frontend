@@ -1,7 +1,21 @@
 <template>
-  <div class="container mx-auto p-4 flex flex-col items-center">
-    <h3 class="mb-1">{{ notePath ? "编辑笔记" : "添加笔记" }}</h3>
-    <Editor v-if="!loading" :init-text="initialContent" @save="saveNote" @cancel="goBack" />
+  <div class="container mx-auto p-4 flex flex-col items-center gap-y-4">
+    <div class="flex items-center">
+      <h3 class="w-[200px]">{{ notePath ? "编辑笔记" : "添加笔记" }}</h3>
+      <el-input
+        class="w-[240px]"
+        v-if="!notePath"
+        v-model="name"
+        placeholder="新增笔记名"
+      ></el-input>
+      <el-text class="w-[240px]" v-else>{{ notePath.split("##")[1] }}</el-text>
+    </div>
+    <Editor
+      v-if="!loading"
+      :init-text="initialContent"
+      @save="saveNote"
+      @cancel="goBack"
+    />
   </div>
 </template>
 
@@ -27,13 +41,14 @@ const fetchInitialContent = async () => {
     initialContent.value = await getNoteContent(notePath.value);
     loading.value = false;
   }
+  loading.value = false;
 };
 
 const saveNote = async (content: string) => {
   if (notePath.value) {
     await updateNote(notePath.value, content, noteSha.value);
   } else {
-    const fileName = `note_${Date.now()}.txt`;
+    const fileName = `note_${Date.now()}##${name.value}.txt`;
     await createNote(fileName, content, process.env.TARGET_FOLDER);
   }
   router.push({ name: "MyPage" });
@@ -42,6 +57,8 @@ const saveNote = async (content: string) => {
 const goBack = () => {
   router.push({ name: "MyPage" });
 };
+
+const name = ref("");
 
 onMounted(() => {
   fetchInitialContent();

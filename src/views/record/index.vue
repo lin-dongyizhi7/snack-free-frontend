@@ -46,9 +46,8 @@ const route = useRoute();
 const markDate = ref<string>("");
 
 onMounted(()=>{
-  console.log(route.query.date);
   markDate.value = route.query.date;
-})
+});
 
 const uploadRef = ref(null);
 const fileList = ref([]);
@@ -85,7 +84,7 @@ const submitFiles = async () => {
     const date = new Date(markDate.value);
     const formatDate = dayjs(date).format('YYYY-MM-DD');
     console.log(fileList.value);
-    await uploadFileToGithub(fileList.value, formatDate + '/');
+    await uploadFileToGithub(fileList.value, process.env.TARGET_FOLDER + formatDate + '/');
     await addDay(markDate.value);
     loadingInstance.close();
     router.push({

@@ -17,5 +17,10 @@ export default defineConfig({
         ? "real/"
         : "test/"
     ),
+    "process.env.TARGET_FILE": JSON.stringify(
+      process.env.NODE_ENV === "production"
+        ? "real/marked_date.json"
+        : "test/test.json"
+    ),
   },
 });

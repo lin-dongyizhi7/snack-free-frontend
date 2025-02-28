@@ -55,7 +55,7 @@ import {getMarkedDays} from "../../api/date";
 const router = useRouter();
 
 onMounted(async() => {
-  punchedDates.value = await getMarkedDays();
+  punchedDates.value = await getMarkedDays(process.env.TARGET_FILE);
   consecutiveDays.value = getConsecutiveDays();
 });
 

@@ -3,13 +3,13 @@ import { fetchGitHubFile, updateGitHubFile } from "../utils/request";
 // const file = "marked_date.json";
 const file = "test.json";
 
-export const getMarkedDays = async (): Promise<string[]> => {
+export const getMarkedDays = async (file: string): Promise<string[]> => {
   const content = await fetchGitHubFile(file);
   if (content) return content?.marked_date;
   else return Promise.resolve([]);
 };
 
-export const updateMarkedDays = async (marked_date: string[]) => {
+export const updateMarkedDays = async (marked_date: string[], file: string) => {
   const newContent = JSON.stringify({ marked_date });
   await updateGitHubFile(file, newContent, `update ${file}`);
 };

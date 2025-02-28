@@ -96,9 +96,9 @@ const submitFiles = async () => {
  }
 
 const addDay = async (date) => {
-  const nowDates = await getMarkedDays();
+  const nowDates = await getMarkedDays(process.env.TARGET_FILE);
   const newDates = insertDay(nowDates, date);
-  await updateMarkedDays(newDates);
+  await updateMarkedDays(newDates, process.env.TARGET_FILE);
 }
 </script>
 

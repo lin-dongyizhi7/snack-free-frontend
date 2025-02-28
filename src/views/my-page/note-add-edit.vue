@@ -50,7 +50,7 @@ const saveNote = async (content: string) => {
   if (notePath.value) {
     await updateNote(notePath.value, content, noteSha.value);
   } else {
-    const fileName = `${dayjs(Date.now()).format("YYYY-MM-DD-HH:mm:ss")}##${name.value}.txt`;
+    const fileName = `${dayjs(Date.now()).format("YYYY-MM-DD-HH:mm:ss")}##${name.value}`;
     await createNote(fileName, content, process.env.TARGET_FOLDER);
   }
   router.push({ name: "MyPage" });

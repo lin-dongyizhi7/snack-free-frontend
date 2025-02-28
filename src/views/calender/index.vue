@@ -49,6 +49,11 @@ import { ref, type Ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import type { CalendarDateType, CalendarInstance } from 'element-plus';
 
+import { useCounterStore } from '../../stores/dates';
+
+const counterStore = useCounterStore();
+const { setConsecutiveDays } = counterStore;
+
 import {isToday, isPreDay, daysDiffToday} from '../../utils/date';
 import {getMarkedDays} from "../../api/date";
 
@@ -57,6 +62,7 @@ const router = useRouter();
 onMounted(async() => {
   punchedDates.value = await getMarkedDays(process.env.TARGET_FILE);
   consecutiveDays.value = getConsecutiveDays();
+  setConsecutiveDays(consecutiveDays.value);
 });
 
 const calendar = ref<CalendarInstance>()

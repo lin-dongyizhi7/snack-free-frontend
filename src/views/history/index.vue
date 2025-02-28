@@ -23,7 +23,8 @@
           :zoom-rate="1.2"
           :max-scale="7"
           :min-scale="0.2"
-          :preview-src-list="srcList"
+          :preview-src-list="images"
+          preview-teleported
           show-progress
         >
         </el-image>
@@ -48,16 +49,16 @@ const markDate = ref<string>("");
 const randomIndex = ref(97);
 
 onMounted(async () => {
-  markDate.value = route.query.date;
+  markDate.value = route.query.date as string;
   const num = Math.floor(Math.random() * 725) + 1;
   randomIndex.value = num;
   await getMarkedImages();
   console.log(images.value);
 });
 
-const images = ref<any>([]);
+const images = ref<string[]>([]);
 const getMarkedImages = async () => {
-  const res = await getImagesByDate(markDate.value, process.env.TARGET_FOLDER);
+  const res = await getImagesByDate(markDate.value, process.env.TARGET_FOLDER) as string[];
   images.value = res;
 };
 </script>

@@ -46,7 +46,7 @@ const route = useRoute();
 const markDate = ref<string>("");
 
 onMounted(()=>{
-  markDate.value = route.query.date;
+  markDate.value = route.query.date as string;
 });
 
 const uploadRef = ref(null);
@@ -95,7 +95,7 @@ const submitFiles = async () => {
     });
  }
 
-const addDay = async (date) => {
+const addDay = async (date: string) => {
   const nowDates = await getMarkedDays(process.env.TARGET_FILE);
   const newDates = insertDay(nowDates, date);
   await updateMarkedDays(newDates, process.env.TARGET_FILE);

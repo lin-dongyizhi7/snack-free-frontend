@@ -119,7 +119,7 @@ const isKeyDayReached = (date: string) : FlagDate => {
 // 判断是否是未来将达到关键天数的日子
 const isKeyDayUpcoming = (date: string) : FlagDate => {
   const lastDay = consecutiveDates.value[consecutiveDays.value - 1]
-  if (consecutiveDays.value === 0) {
+  if (consecutiveDays.value === 0 || daysDiffToday(date) < 0) {
     return {
       flag: false,
       num: 0
@@ -141,7 +141,7 @@ const viewHistory = (date: string) => {
     }
   });
 }
-const punch = (date) => {
+const punch = (date: string) => {
   console.log('打卡');
   router.push({
     name: 'Record',

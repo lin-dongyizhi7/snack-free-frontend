@@ -1,8 +1,5 @@
 import { fetchGitHubFile, updateGitHubFile } from "../utils/request";
 
-// const file = "marked_date.json";
-const file = "test.json";
-
 export const getMarkedDays = async (file: string): Promise<string[]> => {
   const content = await fetchGitHubFile(file);
   if (content) return content?.marked_date;

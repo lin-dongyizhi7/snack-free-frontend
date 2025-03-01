@@ -1,5 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import { TOKENS } from "../utils/constant";
+import { Base64 } from "js-base64";
 
 const owner = "lin-dongyizhi7";
 const repo = "snack-free-data-store";
@@ -32,7 +33,8 @@ export const getNoteContent = async (path: string) => {
       repo,
       path,
     });
-    return atob(data.content);
+    const content = Base64.decode(data.content);
+    return content;
   } catch (error) {
     console.error("Get note content fail:", error);
     return "";
@@ -53,7 +55,7 @@ export const createNote = async (
       repo,
       path: `${path}notes/${fileName}.md`,
       message: `Create note: ${fileName}.md`,
-      content: btoa(content),
+      content: Base64.encode(content),
       branch: "main",
     });
     console.log("Note create succeed");
@@ -76,7 +78,7 @@ export const updateNote = async (
       repo,
       path,
       message: `Update note: ${path}`,
-      content: btoa(content),
+      content: Base64.encode(content),
       sha,
       branch: "main",
     });

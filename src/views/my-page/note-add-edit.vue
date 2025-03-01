@@ -2,11 +2,18 @@
   <div class="container mx-auto p-4 flex flex-col items-center gap-y-4">
     <div class="flex items-center">
       <h3 class="w-[200px]">{{ notePath ? "编辑笔记" : "添加笔记" }}</h3>
-      <el-input class="w-[240px]" v-model="name" placeholder="新增笔记名"></el-input>
+      <el-input
+        v-if="!notePath"
+        class="w-[240px]"
+        v-model="name"
+        placeholder="新增笔记名"
+      ></el-input>
+      <el-text v-else>{{ name }}</el-text>
     </div>
     <Editor
       v-if="!loading"
       :init-text="initialContent"
+      :view="justView"
       @save="saveNote"
       @cancel="goBack"
     />
@@ -26,6 +33,7 @@ import dayjs from "dayjs";
 const route = useRoute();
 const router = useRouter();
 
+const justView = ref(false);
 const notePath = ref<string>((route.query.notePath as string) || "");
 const noteSha = ref<string>((route.query.noteSha as string) || "");
 const initialContent = ref<string>("");
@@ -65,6 +73,9 @@ const name = ref("");
 onMounted(() => {
   name.value = notePath.value.split("##")[1];
   fetchInitialContent();
+  if (notePath.value && !noteSha.value) {
+    justView.value = true;
+  }
 });
 </script>
 

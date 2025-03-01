@@ -6,15 +6,27 @@
     <el-button text @click="addNoteHandler">+ 添加笔记</el-button>
     <ul>
       <li v-for="note in notes" :key="note.sha" class="flex flex-col items-center w-full">
-        <div class="flex items-center w-full">
-          <div class="w-[200px] text-left">{{ note.showName }}</div>
+        <div class="flex items-center w-full cursor-pointer">
+          <div @click="viewNote(note)" class="w-[200px] text-left">
+            {{ note.showName }}
+          </div>
           <div class="w-[80px] text-sm text-gray-600/50">
             {{ note.time }}
           </div>
-          <el-button class="w-[40px]" text size="small" @click="editNoteHandler(note)">
+          <el-button
+            class="w-[40px]"
+            text
+            size="small"
+            @click.stop="editNoteHandler(note)"
+          >
             编辑
           </el-button>
-          <el-button class="w-[40px]" text size="small" @click="deleteNoteHandler(note)">
+          <el-button
+            class="w-[40px]"
+            text
+            size="small"
+            @click.stop="deleteNoteHandler(note)"
+          >
             删除
           </el-button>
         </div>
@@ -64,6 +76,15 @@ const editNoteHandler = (note: any) => {
 const deleteNoteHandler = async (note: any) => {
   await deleteNote(note.path, note.sha);
   await fetchNotes();
+};
+
+const viewNote = (note: any) => {
+  router.push({
+    name: "NoteEditor",
+    query: {
+      notePath: note.path,
+    },
+  });
 };
 
 onMounted(() => {

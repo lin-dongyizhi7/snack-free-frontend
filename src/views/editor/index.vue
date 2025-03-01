@@ -2,7 +2,7 @@
   <div class="w-full">
     <div id="vditor" ref="vditorRef"></div>
     <el-button @click="goBack" text>返回</el-button>
-    <el-button @click="saveNote" type="primary" text>保存</el-button>
+    <el-button v-if="!view" @click="saveNote" type="primary" text>保存</el-button>
   </div>
 </template>
 
@@ -19,6 +19,11 @@ const props = defineProps({
     type: String,
     required: false,
     default: "添加新笔记",
+  },
+  view: {
+    type: Boolean,
+    required: true,
+    default: false,
   },
 });
 
@@ -59,6 +64,7 @@ onMounted(() => {
     ],
     value: editorContent.value,
     placeholder: "添加内容...",
+    readOnly: props.view,
     cache: {
       enable: false,
     },
@@ -69,7 +75,7 @@ const emits = defineEmits(["save", "cancel"]);
 
 const saveNote = () => {
   editorContent.value = vditorInstance.value.getValue();
-    emits("save", editorContent.value);
+  emits("save", editorContent.value);
 };
 
 const goBack = () => {

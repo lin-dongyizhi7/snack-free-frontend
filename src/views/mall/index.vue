@@ -29,14 +29,11 @@
     v-model="drawerVisible"
     :show-close="false"
     direction="btt"
-    size="40%"
+    size="80%"
     title="添加新商品"
   >
     <template #default>
-      <div class="flex flex-col gap-y-2">
-        <el-input v-model="tbLink" placeholder="请输入商品淘宝链接"></el-input>
-        <el-button type="primary" text @click="addProduct">确定添加</el-button>
-      </div>
+      <add-view @add="addProduct"></add-view>
     </template>
   </el-drawer>
   <div class="container mx-auto p-4">
@@ -54,7 +51,7 @@
           ></el-checkbox>
         </template>
         <a :href="product.link" target="_blank">
-          <img :src="product.image" alt="商品图片" class="w-full h-48 object-cover" />
+          <img :src="product.showImg" alt="商品图片" class="w-full h-48 object-cover" />
         </a>
         <div class="p-4">
           <h3 class="text-lg font-semibold mb-1">{{ product.name }}</h3>
@@ -71,7 +68,11 @@ import { ref, onMounted } from "vue";
 
 import { useCounterStore } from "../../stores/dates";
 import { useProductsStore } from "../../stores/product";
-import { ElMessage } from "element-plus";
+import { addProductToGithub, getProductList } from "../../api/products";
+import { ElLoading, ElMessage } from "element-plus";
+// import { product_list } from "./products";
+
+import addView from "./add-product.vue";
 
 const productStore = useProductsStore();
 const counterStore = useCounterStore();
@@ -84,7 +85,15 @@ const returnHome = () => {
 
 onMounted(() => {
   points.value = computePoints();
+  init();
 });
+
+const init = async () => {
+  const res = await getProductList(`${process.env.TARGET_FOLDER}products`);
+  if (res.length) {
+    productStore.setProducts(res);
+  }
+};
 
 const computePoints = () => {
   const days = counterStore.consecutiveCheckInDays;
@@ -107,29 +116,17 @@ const computePoints = () => {
 };
 
 const drawerVisible = ref(false);
-// 输入淘宝链接
-const tbLink = ref("");
+
 const openDrawer = () => {
   drawerVisible.value = true;
 };
 
 // 添加新商品
-const addProduct = () => {
-  if (!tbLink.value) {
-    ElMessage.warning("请输入商品淘宝链接");
-    return;
-  }
-  // 这里只是模拟添加，实际需要根据链接获取商品信息
-  const newProduct = {
-    id: Date.now(),
-    name: "新商品",
-    price: "待获取",
-    image: "https://via.placeholder.com/300",
-    link: tbLink.value,
-  };
-  productStore.addProduct(newProduct);
+const addProduct = async () => {
   drawerVisible.value = false;
-  tbLink.value = "";
+  const loading = ElLoading.service({ fullscreen: true });
+  await init();
+  loading.close();
   ElMessage.success("商品添加成功");
 };
 
@@ -159,7 +156,7 @@ const handleCheckboxChange = (product: any) => {
 };
 
 // 删除选中的商品
-const deleteSelectedProducts = () => {
+const deleteSelectedProducts = async () => {
   if (selectedProducts.value.length === 0) {
     ElMessage.warning("请选择要删除的商品");
     return;
@@ -167,6 +164,10 @@ const deleteSelectedProducts = () => {
   productStore.removeProducts(selectedProducts.value);
   isManageMode.value = false;
   selectedProducts.value = [];
+  const loading = ElLoading.service({ fullscreen: true });
+  const newData = JSON.stringify({ product_list: productStore.products });
+  await addProductToGithub(process.env.TARGET_FOLDER + "products/products.json", newData);
+  loading.close();
   ElMessage.success("商品删除成功");
 };
 </script>

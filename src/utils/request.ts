@@ -139,7 +139,7 @@ export const uploadFileToGithub = async (
         };
       });
     }
-    console.log("Mark successfully!");
+    console.log("Upload successfully!");
   } catch (error) {
     console.error("Error uploading images:", error);
   }

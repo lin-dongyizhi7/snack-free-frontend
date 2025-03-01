@@ -8,14 +8,54 @@
       </div>
     </div>
   </div>
+  <div class="opts flex w-full items-center justify-center">
+    <!-- 添加商品按钮 -->
+    <el-button type="primary" text @click="openDrawer">添加商品</el-button>
+    <el-button type="primary" text @click="toggleManageMode">{{
+      !isManageMode ? "管理商品" : "退出管理"
+    }}</el-button>
+    <el-text class="w-[30px]" v-if="isManageMode">{{ selectedProducts.length }}</el-text>
+    <el-button
+      type="danger"
+      text
+      @click="deleteSelectedProducts"
+      v-if="isManageMode"
+      :disabled="selectedProducts.length === 0"
+      >删除</el-button
+    >
+  </div>
+  <!-- 抽屉组件 -->
+  <el-drawer
+    v-model="drawerVisible"
+    :show-close="false"
+    direction="btt"
+    size="40%"
+    title="添加新商品"
+  >
+    <template #default>
+      <div class="flex flex-col gap-y-2">
+        <el-input v-model="tbLink" placeholder="请输入商品淘宝链接"></el-input>
+        <el-button type="primary" text @click="addProduct">确定添加</el-button>
+      </div>
+    </template>
+  </el-drawer>
   <div class="container mx-auto p-4">
     <div class="grid grid-cols-3 gap-4">
       <div
-        v-for="product in products"
+        v-for="product in productStore.products"
         :key="product.id"
         class="bg-white rounded-lg shadow-md overflow-hidden"
       >
-        <img :src="product.image" alt="商品图片" class="w-full h-48 object-cover" />
+        <template v-if="isManageMode">
+          <!-- 修改复选框绑定 -->
+          <el-checkbox
+            :checked="selectedProducts.includes(product)"
+            @change="handleCheckboxChange(product)"
+          ></el-checkbox>
+        </template>
+        <a :href="product.link" target="_blank">
+          <img :src="product.image" alt="商品图片" class="w-full h-48 object-cover" />
+        </a>
         <div class="p-4">
           <h3 class="text-lg font-semibold mb-1">{{ product.name }}</h3>
           <p class="text-gray-600">{{ product.price }}</p>
@@ -30,7 +70,10 @@ import { useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 
 import { useCounterStore } from "../../stores/dates";
+import { useProductsStore } from "../../stores/product";
+import { ElMessage } from "element-plus";
 
+const productStore = useProductsStore();
 const counterStore = useCounterStore();
 const points = ref(0);
 
@@ -63,65 +106,69 @@ const computePoints = () => {
   return totalPoints;
 };
 
-const products = ref([
-  {
-    id: 1,
-    name: "商品名称 1",
-    price: "20",
-    points: "20",
-    image: "./temp.jpg",
-  },
-  {
-    id: 2,
-    name: "商品名称 2",
-    price: "199",
-    points: "199",
-    image: "./temp.jpg",
-  },
-  {
-    id: 3,
-    name: "商品名称 3",
-    price: "99",
-    points: "99",
-    image: "./temp.jpg",
-  },
-  {
-    id: 4,
-    name: "商品名称 4",
-    price: "20",
-    points: "20",
-    image: "./temp.jpg",
-  },
-  {
-    id: 5,
-    name: "商品名称 5",
-    price: "199",
-    points: "199",
-    image: "./temp.jpg",
-  },
-  {
-    id: 6,
-    name: "商品名称 6",
-    price: "99",
-    points: "99",
-    image: "./temp.jpg",
-  },
-  {
-    id: 7,
-    name: "商品名称 7",
-    price: "50",
-    points: "50",
-    image: "./temp.jpg",
-  },
-  {
-    id: 8,
-    name: "商品名称 8",
-    price: "399",
-    points: "399",
-    image: "./temp.jpg",
-  },
-  // 可以继续添加更多商品
-]);
+const drawerVisible = ref(false);
+// 输入淘宝链接
+const tbLink = ref("");
+const openDrawer = () => {
+  drawerVisible.value = true;
+};
+
+// 添加新商品
+const addProduct = () => {
+  if (!tbLink.value) {
+    ElMessage.warning("请输入商品淘宝链接");
+    return;
+  }
+  // 这里只是模拟添加，实际需要根据链接获取商品信息
+  const newProduct = {
+    id: Date.now(),
+    name: "新商品",
+    price: "待获取",
+    image: "https://via.placeholder.com/300",
+    link: tbLink.value,
+  };
+  productStore.addProduct(newProduct);
+  drawerVisible.value = false;
+  tbLink.value = "";
+  ElMessage.success("商品添加成功");
+};
+
+// 是否处于管理模式
+const isManageMode = ref(false);
+const selectedProducts = ref<any[]>([]);
+
+// 切换管理模式
+const toggleManageMode = () => {
+  isManageMode.value = !isManageMode.value;
+  if (!isManageMode.value) {
+    // 退出管理模式时清空选中商品
+    selectedProducts.value = [];
+  }
+};
+
+// 处理复选框状态变化
+const handleCheckboxChange = (product: any) => {
+  const index = selectedProducts.value.findIndex((p) => p.id === product.id);
+  if (index !== -1) {
+    // 如果已选中，则取消选中
+    selectedProducts.value.splice(index, 1);
+  } else {
+    // 如果未选中，则添加到选中列表
+    selectedProducts.value.push(product);
+  }
+};
+
+// 删除选中的商品
+const deleteSelectedProducts = () => {
+  if (selectedProducts.value.length === 0) {
+    ElMessage.warning("请选择要删除的商品");
+    return;
+  }
+  productStore.removeProducts(selectedProducts.value);
+  isManageMode.value = false;
+  selectedProducts.value = [];
+  ElMessage.success("商品删除成功");
+};
 </script>
 
 <style scoped lang="less"></style>

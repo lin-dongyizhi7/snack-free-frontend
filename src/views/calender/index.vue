@@ -29,6 +29,9 @@
           <div v-if="isToday(data.day) && !isMarked(data.day)" class="without-mark">
             <el-button size="small" text @click="punch(data.day)"> 打卡 </el-button>
           </div>
+          <div v-if="isToday(data.day) && isMarked(data.day)" class="without-mark">
+            <el-button size="small" text @click="cancelPunch(data.day)"> 取消打卡 </el-button>
+          </div>
           <div
             v-if="
               !isMarked(data.day) &&
@@ -157,7 +160,9 @@ const punch = (date: string) => {
     }
   });
 };
-
+const cancelPunch = async (date: string) => {
+  await cancelToday(process.env.TARGET_FILE);
+};
 
 const opt = (date: string) => {
   if (isMarked(date)) {

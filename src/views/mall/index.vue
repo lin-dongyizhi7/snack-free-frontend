@@ -6,6 +6,9 @@
       <div class="text-lg font-medium">
         积分: <span class="text-green-600">{{ points }}</span>
       </div>
+      <div class="pl-2">
+        <el-button text @click="goToLottery">积分抽奖</el-button>
+      </div>
     </div>
   </div>
   <div class="opts flex w-full items-center justify-center">
@@ -93,6 +96,10 @@ const init = async () => {
   if (res.length) {
     productStore.setProducts(res);
   }
+};
+
+const goToLottery = () => {
+  router.push("/lottery");
 };
 
 const computePoints = () => {

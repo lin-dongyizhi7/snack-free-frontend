@@ -6,6 +6,7 @@ const owner = "lin-dongyizhi7";
 const repo = "snack-free-data-store";
 
 import { fetchGitHubFileFolder, fetchGitHubFile } from "../utils/request";
+import { getMarkedDays, updateMarkedDays } from "./date";
 
 export const getImagesByDate = async (date: string, prefix: string) => {
   const path = prefix + date;
@@ -49,3 +50,9 @@ export const getFormData = async (path: string): Promise<FormData> => {
   const res = await fetchGitHubFile(path);
   return res;
 };
+
+export const cancelToday = async (path: string) => {
+  const dates = await getMarkedDays(path);
+  dates.pop();
+  updateMarkedDays(dates, path);
+}

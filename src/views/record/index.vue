@@ -102,7 +102,7 @@ const form = reactive({
 const icons = [Cloudy, PartlyCloudy, Sunny];
 const submitForm = async () => {
   const date = new Date(markDate.value);
-  const formatDate = dayjs(date).format('YYYY-MM-DD');
+  const formatDate = dayjs(date).format('YYYY-MM-DD-HH:mm:ss');
   await submitFormData(form, `${process.env.TARGET_FOLDER}${formatDate}/record.json`);
 }
 
@@ -116,7 +116,7 @@ const submitFiles = async () => {
     }
     const loadingInstance = ElLoading.service({ fullscreen: true });
     const date = new Date(markDate.value);
-    const formatDate = dayjs(date).format('YYYY-MM-DD');
+    const formatDate = dayjs(date).format('YYYY-MM-DD-HH:mm:ss');
     await uploadFileToGithub(fileList.value, process.env.TARGET_FOLDER + formatDate + '/');
     await submitForm();
     await addDay(markDate.value);

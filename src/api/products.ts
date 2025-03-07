@@ -1,4 +1,4 @@
-import { product_list } from "./../views/mall/products";
+// import { product_list } from "./../views/mall/products";
 import {
   fetchGitHubFile,
   fetchGitHubFileFolder,
@@ -30,4 +30,20 @@ export interface ProductData {
 
 export const addProductToGithub = async (path: string, data: string) => {
   await updateGitHubFile(path, data, "Update product list");
+};
+
+interface PointsData {
+  total: number;
+  cost: number;
+  remain: number;
+  count: number;
+}
+
+export const getPointsData = async (path: string): Promise<PointsData> => {
+  const jsonData = await fetchGitHubFile(path);
+  return jsonData;
+};
+
+export const updatePointsData = async (path: string, data: string) => {
+  await updateGitHubFile(path, data, "Update points info");
 };

@@ -4,9 +4,10 @@ import Login from "../views/home/login.vue";
 import Home from "../views/home/index.vue";
 import Record from "../views/record/index.vue";
 import History from "../views/history/index.vue";
-import Mall from "../views/mall/index.vue";
 import MyPage from "../views/my-page/index.vue";
 import NoteEditor from "../views/my-page/note-add-edit.vue";
+import Mall from "../views/mall/index.vue";
+import Lottery from "../views/mall/lottery.vue";
 
 import { eqLock, updateToken } from "../utils/constant";
 import { useAuthStore } from "../stores/auth";
@@ -52,6 +53,12 @@ const routes = [
     path: "/mall",
     name: "Mall",
     component: Mall,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/lottery",
+    name: "Lottery",
+    component: Lottery,
     meta: { requiresAuth: true },
   },
 ];
